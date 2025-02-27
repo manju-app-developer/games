@@ -55,6 +55,7 @@
             color: white;
             border: none;
             cursor: pointer;
+            border-radius: 5px;
         }
     </style>
 </head>
@@ -88,10 +89,14 @@
     <canvas id="gameCanvas"></canvas>
 
     <script>
+        let animationFrame;
+
         function showMenu() {
             document.querySelector(".game-container").style.display = "flex";
             document.querySelector(".back-btn").style.display = "none";
-            document.getElementById("gameCanvas").style.display = "none";
+            const canvas = document.getElementById("gameCanvas");
+            canvas.style.display = "none";
+            cancelAnimationFrame(animationFrame);
         }
 
         function startGame(gameName) {
@@ -106,34 +111,40 @@
 
             if (gameName === "flappyRocket") {
                 let y = canvas.height / 2, velocity = 0, gravity = 0.5;
-                document.onkeydown = () => velocity = -10;
+                document.onkeydown = () => velocity = -8;
                 function loop() {
                     ctx.clearRect(0, 0, canvas.width, canvas.height);
                     velocity += gravity;
                     y += velocity;
                     ctx.fillStyle = "white";
                     ctx.fillRect(50, y, 30, 30);
-                    requestAnimationFrame(loop);
+                    animationFrame = requestAnimationFrame(loop);
                 }
                 loop();
             } else if (gameName === "hillClimb") {
                 let x = 50, speed = 2;
-                document.onkeydown = () => x += 20;
+                document.onkeydown = (e) => {
+                    if (e.key === "ArrowRight") x += 10;
+                    if (e.key === "ArrowLeft") x -= 10;
+                };
                 function loop() {
                     ctx.clearRect(0, 0, canvas.width, canvas.height);
                     ctx.fillStyle = "red";
                     ctx.fillRect(x, canvas.height - 50, 50, 30);
-                    requestAnimationFrame(loop);
+                    animationFrame = requestAnimationFrame(loop);
                 }
                 loop();
             } else if (gameName === "spaceShooter") {
                 let y = canvas.height / 2;
-                document.onkeydown = () => y -= 10;
+                document.onkeydown = (e) => {
+                    if (e.key === "ArrowUp") y -= 15;
+                    if (e.key === "ArrowDown") y += 15;
+                };
                 function loop() {
                     ctx.clearRect(0, 0, canvas.width, canvas.height);
                     ctx.fillStyle = "cyan";
                     ctx.fillRect(100, y, 40, 40);
-                    requestAnimationFrame(loop);
+                    animationFrame = requestAnimationFrame(loop);
                 }
                 loop();
             } else if (gameName === "2048Game") {

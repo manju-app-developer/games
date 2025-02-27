@@ -10,66 +10,10 @@
     <h1>Hill Climb Racer</h1>
     <button onclick="goBack()">Back to Menu</button>
     <canvas id="gameCanvas"></canvas>
-
-    <script>
-        function goBack() {
-            window.location.href = "index.html";
-        }
-
-        const canvas = document.getElementById("gameCanvas");
-        const ctx = canvas.getContext("2d");
-
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-
-        let car = {
-            x: 100,
-            y: canvas.height - 100,
-            width: 60,
-            height: 30,
-            speed: 0,
-            gravity: 0.2,
-            jumpPower: -5
-        };
-
-        let ground = { y: canvas.height - 50, height: 10 };
-
-        document.addEventListener("keydown", function (e) {
-            if (e.key === "ArrowUp") car.speed = car.jumpPower;
-            if (e.key === "ArrowRight") car.x += 10;
-            if (e.key === "ArrowLeft") car.x -= 10;
-        });
-
-        function update() {
-            car.speed += car.gravity;
-            car.y += car.speed;
-
-            if (car.y + car.height > ground.y) {
-                car.y = ground.y - car.height;
-                car.speed = 0;
-            }
-        }
-
-        function draw() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            
-            // Draw ground
-            ctx.fillStyle = "brown";
-            ctx.fillRect(0, ground.y, canvas.width, ground.height);
-
-            // Draw car
-            ctx.fillStyle = "red";
-            ctx.fillRect(car.x, car.y, car.width, car.height);
-
-            requestAnimationFrame(gameLoop);
-        }
-
-        function gameLoop() {
-            update();
-            draw();
-        }
-
-        gameLoop();
-    </script>
+    <div class="controls">
+        <button id="accelerate">Accelerate</button>
+        <button id="brake">Brake</button>
+    </div>
+    <script src="script.js"></script>
 </body>
 </html>

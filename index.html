@@ -5,33 +5,26 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GameZone - Play & Enjoy</title>
     <link rel="stylesheet" href="styles.css">
-    <link rel="icon" href="game_icon.png">
 </head>
 <body>
     <header>
-        <h1>🎮 GameZone</h1>
-        <p>Select a game and challenge yourself!</p>
+        <h1>GameZone</h1>
+        <p>Select a game to play:</p>
     </header>
-
+    
     <div class="game-container">
-        <div class="game-card" onclick="startGame('flappyRocket')">
-            <h3>🚀 Flappy Rocket</h3>
+        <div class="game-card" onclick="window.location.href='flappyRocket.html'">
+            <h3>Flappy Rocket</h3>
         </div>
-        <div class="game-card" onclick="startGame('hillClimb')">
-            <h3>🏎️ Hill Climb Racer</h3>
+        <div class="game-card" onclick="window.location.href='hill_climb.html'">
+            <h3>Hill Climb Racer</h3>
         </div>
-        <div class="game-card" onclick="startGame('spaceShooter')">
-            <h3>🛸 Space Shooter</h3>
+        <div class="game-card" onclick="window.location.href='spaceShooter.html'">
+            <h3>Space Shooter</h3>
         </div>
-        <div class="game-card" onclick="startGame('2048Game')">
-            <h3>🔢 2048 AI</h3>
+        <div class="game-card" onclick="window.location.href='2048Game.html'">
+            <h3>2048 AI</h3>
         </div>
     </div>
-
-    <button class="back-btn" onclick="showMenu()">🔙 Back to Menu</button>
-
-    <canvas id="gameCanvas"></canvas>
-
-    <script src="script.js"></script>
 </body>
 </html>

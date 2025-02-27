@@ -3,15 +3,147 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Flappy Rocket</title>
-    <link rel="stylesheet" href="style.css">
+    <title>GameZone - Play & Enjoy</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+        body {
+            text-align: center;
+            background: linear-gradient(135deg, #0f172a, #1e293b);
+            color: white;
+            overflow: hidden;
+        }
+        header {
+            margin-top: 20px;
+        }
+        .game-container {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+        .game-card {
+            background: #222;
+            padding: 15px;
+            border-radius: 10px;
+            cursor: pointer;
+            width: 200px;
+            text-align: center;
+            transition: 0.3s;
+        }
+        .game-card:hover {
+            background: #444;
+        }
+        .game-card img {
+            width: 100%;
+            border-radius: 10px;
+        }
+        canvas {
+            display: none;
+            background: black;
+        }
+        .back-btn {
+            display: none;
+            margin: 10px;
+            padding: 10px;
+            background: red;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+    </style>
 </head>
 <body>
-    <canvas id="gameCanvas"></canvas>
-    <div id="scoreBoard">
-        <h2>Score: <span id="score">0</span></h2>
-        <h2>High Score: <span id="highScore">0</span></h2>
+    <header>
+        <h1>GameZone</h1>
+        <p>Select a game to play:</p>
+    </header>
+    
+    <div class="game-container">
+        <div class="game-card" onclick="startGame('flappyRocket')">
+            <h3>Flappy Rocket</h3>
+            <svg width="80" height="80" viewBox="0 0 24 24"><path fill="white" d="M12 2C10.34 2 9 3.34 9 5c0 1.66 1.34 3 3 3s3-1.34 3-3c0-1.66-1.34-3-3-3zM5 9c-1.11 0-2 .89-2 2s.89 2 2 2h14c1.11 0 2-.89 2-2s-.89-2-2-2H5zm1 5l-2 8h3l1.5-6h6L17 22h3l-2-8H6z"/></svg>
+        </div>
+        <div class="game-card" onclick="startGame('hillClimb')">
+            <h3>Hill Climb Racer</h3>
+            <svg width="80" height="80" viewBox="0 0 24 24"><path fill="white" d="M5 16l7-4 7 4V5H5v11zM2 18h20v2H2v-2z"/></svg>
+        </div>
+        <div class="game-card" onclick="startGame('spaceShooter')">
+            <h3>Space Shooter</h3>
+            <svg width="80" height="80" viewBox="0 0 24 24"><path fill="white" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm3 14h-2v-4h-2v4H9v-6h6v6z"/></svg>
+        </div>
+        <div class="game-card" onclick="startGame('2048Game')">
+            <h3>2048 AI</h3>
+            <svg width="80" height="80" viewBox="0 0 24 24"><path fill="white" d="M3 3h18v18H3V3zm4 4H5v2h2V7zm0 4H5v2h2v-2zm0 4H5v2h2v-2zm4-8H9v2h2V7zm0 4H9v2h2v-2zm0 4H9v2h2v-2zm4-8h-2v2h2V7zm0 4h-2v2h2v-2zm0 4h-2v2h2v-2zm4-8h-2v2h2V7zm0 4h-2v2h2v-2zm0 4h-2v2h2v-2z"/></svg>
+        </div>
     </div>
-    <script src="script.js"></script>
+
+    <button class="back-btn" onclick="showMenu()">Back to Menu</button>
+
+    <canvas id="gameCanvas"></canvas>
+
+    <script>
+        function showMenu() {
+            document.querySelector(".game-container").style.display = "flex";
+            document.querySelector(".back-btn").style.display = "none";
+            document.getElementById("gameCanvas").style.display = "none";
+        }
+
+        function startGame(gameName) {
+            document.querySelector(".game-container").style.display = "none";
+            document.querySelector(".back-btn").style.display = "block";
+            const canvas = document.getElementById("gameCanvas");
+            canvas.style.display = "block";
+            const ctx = canvas.getContext("2d");
+
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+
+            if (gameName === "flappyRocket") {
+                let y = canvas.height / 2, velocity = 0, gravity = 0.5;
+                document.onkeydown = () => velocity = -10;
+                function loop() {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    velocity += gravity;
+                    y += velocity;
+                    ctx.fillStyle = "white";
+                    ctx.fillRect(50, y, 30, 30);
+                    requestAnimationFrame(loop);
+                }
+                loop();
+            } else if (gameName === "hillClimb") {
+                let x = 50, speed = 2;
+                document.onkeydown = () => x += 20;
+                function loop() {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    ctx.fillStyle = "red";
+                    ctx.fillRect(x, canvas.height - 50, 50, 30);
+                    requestAnimationFrame(loop);
+                }
+                loop();
+            } else if (gameName === "spaceShooter") {
+                let y = canvas.height / 2;
+                document.onkeydown = () => y -= 10;
+                function loop() {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    ctx.fillStyle = "cyan";
+                    ctx.fillRect(100, y, 40, 40);
+                    requestAnimationFrame(loop);
+                }
+                loop();
+            } else if (gameName === "2048Game") {
+                ctx.fillStyle = "gold";
+                ctx.fillRect(100, 100, 100, 100);
+                ctx.fillStyle = "black";
+                ctx.font = "30px Arial";
+                ctx.fillText("2048", 120, 160);
+            }
+        }
+    </script>
 </body>
 </html>

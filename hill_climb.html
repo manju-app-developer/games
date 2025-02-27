@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hill Climb Racing</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background-color: #87CEEB;
+        }
+        canvas {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="gameCanvas"></canvas>
+    
+    <script>
+        const canvas = document.getElementById("gameCanvas");
+        const ctx = canvas.getContext("2d");
+
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        // Game variables
+        let gravity = 0.4;
+        let car = { x: 100, y: 300, width: 50, height: 30, speed: 0, angle: 0, fuel: 100 };
+        let terrain = [];
+        let coins = [];
+        let fuelCans = [];
+        let score = 0;
+
+        // Generate terrain
+        function generateTerrain() {
+            let x = 0, y = canvas.height - 100;
+            for (let i = 0; i < 100; i++) {
+                y += Math.sin(i * 0.3) * 50;
+                terrain.push({ x: x, y: y });
+                x += 50;
+            }
+        }
+
+        // Generate coins & fuel
+        function generateCollectibles() {
+            for (let i = 1; i < terrain.length; i += 5) {
+                if (Math.random() < 0.3) {
+                    coins.push({ x: terrain[i].x, y: terrain[i].y - 30 });
+                }
+                if (Math.random() < 0.1) {
+                    fuelCans.push({ x: terrain[i].x, y: terrain[i].y - 40 });
+                }
+            }
+        }
+
+        generateTerrain();
+        generateCollectibles();
+
+        // Controls
+        let keys = {};
+        window.addEventListener("keydown", (e) => keys[e.key] = true);
+        window.addEventListener("keyup", (e) => keys[e.key] = false);
+
+        function update() {
+            if (keys["ArrowUp"]) car.speed += 0.3;
+            if (keys["ArrowDown"]) car.speed -= 0.2;
+            if (keys["ArrowLeft"]) car.angle -= 0.05;
+            if (keys["ArrowRight"]) car.angle += 0.05;
+
+            car.speed *= 0.98; // Friction
+            car.x += car.speed * Math.cos(car.angle);
+            car.y += car.speed * Math.sin(car.angle);
+            car.y += gravity; // Gravity effect
+
+            // Collision with terrain
+            for (let i = 0; i < terrain.length - 1; i++) {
+                let t1 = terrain[i], t2 = terrain[i + 1];
+                if (car.x > t1.x && car.x < t2.x) {
+                    let groundY = t1.y + (t2.y - t1.y) * ((car.x - t1.x) / (t2.x - t1.x));
+                    if (car.y >= groundY - car.height) {
+                        car.y = groundY - car.height;
+                        car.speed *= 0.9;
+                    }
+                }
+            }
+
+            // Collect coins
+            coins = coins.filter((coin) => {
+                if (Math.abs(car.x - coin.x) < 20 && Math.abs(car.y - coin.y) < 20) {
+                    score += 10;
+                    return false;
+                }
+                return true;
+            });
+
+            // Collect fuel
+            fuelCans = fuelCans.filter((fuel) => {
+                if (Math.abs(car.x - fuel.x) < 20 && Math.abs(car.y - fuel.y) < 20) {
+                    car.fuel += 20;
+                    return false;
+                }
+                return true;
+            });
+
+            car.fuel -= 0.1;
+            if (car.fuel <= 0) car.speed = 0;
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Draw terrain
+            ctx.beginPath();
+            ctx.moveTo(0, canvas.height);
+            terrain.forEach((point) => ctx.lineTo(point.x, point.y));
+            ctx.lineTo(canvas.width, canvas.height);
+            ctx.fillStyle = "green";
+            ctx.fill();
+
+            // Draw car
+            ctx.save();
+            ctx.translate(car.x, car.y);
+            ctx.rotate(car.angle);
+            ctx.fillStyle = "red";
+            ctx.fillRect(-car.width / 2, -car.height / 2, car.width, car.height);
+            ctx.restore();
+
+            // Draw coins
+            coins.forEach((coin) => {
+                ctx.fillStyle = "gold";
+                ctx.beginPath();
+                ctx.arc(coin.x, coin.y, 10, 0, Math.PI * 2);
+                ctx.fill();
+            });
+
+            // Draw fuel
+            fuelCans.forEach((fuel) => {
+                ctx.fillStyle = "blue";
+                ctx.fillRect(fuel.x - 5, fuel.y - 10, 10, 20);
+            });
+
+            // Draw UI
+            ctx.fillStyle = "black";
+            ctx.font = "20px Arial";
+            ctx.fillText(`Score: ${score}`, 20, 30);
+            ctx.fillText(`Fuel: ${Math.max(0, Math.round(car.fuel))}`, 20, 60);
+        }
+
+        function gameLoop() {
+            update();
+            draw();
+            requestAnimationFrame(gameLoop);
+        }
+
+        gameLoop();
+    </script>
+</body>
+</html>
